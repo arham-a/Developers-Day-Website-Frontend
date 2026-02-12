@@ -62,8 +62,12 @@
 .bg-gray-light { background-color: var(--color-gray-light-1); }
 .bg-white { background-color: var(--color-white); }
 .bg-red-primary { background-color: var(--color-red-primary); }
-.bg-red-bright { background-color: var(--color-red-bright); }
+.bg-red-medium { background-color: var(--color-red-medium); }
 .bg-brown-red { background-color: var(--color-brown-red); }
+.bg-dark-red { background-color: var(--color-brown-dark-3); }
+.bg-dark-red-2 { background-color: var(--color-brown-dark-2); }
+.bg-dark-red-4 { background-color: var(--color-brown-dark-4); }
+.bg-dark-red-1 { background-color: var(--color-brown-dark-1); }
 
 .text-black { color: var(--color-black); }
 .text-gray-dark { color: var(--color-gray-dark); }
@@ -75,6 +79,7 @@
 
 .border-red-primary { border-color: var(--color-red-primary); }
 .border-gray-light { border-color: var(--color-gray-light-1); }
+.border-red-dark { border-color: var(--color-red-dark); }
 
 /* Gradient Utilities */
 .gradient-red-dark {
