@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+@plugin '../hero.ts';
+
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans: "font", sans-serif;
+    --font-mono: "monospace", monospace;
+}
+
+/* Color Palette Variables */
+:root {
+    /* Grayscale Colors */
+    --color-black: #000000;
+    --color-black-80: rgba(0, 0, 0, 0.80);
+    --color-gray-dark: #4F4F4F;
+    --color-gray-medium: #676767;
+    --color-gray-light-1: #C4C4C4;
+    --color-gray-light-2: #CDCDCD;
+    --color-gray-light-3: #D9D9D9;
+    --color-gray-light-4: #E1E1E1;
+    --color-white: #FFFFFF;
+    --color-gray-warm: #E4E2E2;
+    
+    /* Dark Brown/Red Tones */
+    --color-brown-dark-1: #271C1C;
+    --color-brown-dark-2: #392828;
+    --color-brown-dark-3: #191111;
+    --color-brown-dark-4: #1D0E0E;
+    --color-brown-red: #3B1212;
+    
+    /* Red Colors */
+    --color-red-primary: #D71D22;
+    --color-red-primary-15: rgba(215, 29, 34, 0.15);
+    --color-red-bright: #EB1F24;
+    --color-red-medium: #D41111;
+    --color-red-dark: #6E1617;
+    
+    /* Additional Dark Tones */
+    --color-dark-1: #141413;
+    --color-dark-red: #351314;
+    
+    /* Gradient Stop Colors */
+    --color-red-gradient-1: #EC1C24;
+    --color-red-gradient-2: #E61F23;
+    --color-red-gradient-3: #CC1D23;
+    --color-red-gradient-4: #BD1C1F;
+    --color-red-gradient-5: #9A191C;
+    --color-red-gradient-6: #831F22;
+    --color-red-gradient-7: #4E2021;
+    --color-red-gradient-8: #2D2120;
+    --color-red-gradient-9: #212120;
+}
+
+/* Utility Classes for Colors */
+.bg-black { background-color: var(--color-black); }
+.bg-gray-dark { background-color: var(--color-gray-dark); }
+.bg-gray-medium { background-color: var(--color-gray-medium); }
+.bg-gray-light { background-color: var(--color-gray-light-1); }
+.bg-white { background-color: var(--color-white); }
+.bg-red-primary { background-color: var(--color-red-primary); }
+.bg-red-bright { background-color: var(--color-red-bright); }
+.bg-brown-red { background-color: var(--color-brown-red); }
+
+.text-black { color: var(--color-black); }
+.text-gray-dark { color: var(--color-gray-dark); }
+.text-gray-medium { color: var(--color-gray-medium); }
+.text-gray-light { color: var(--color-gray-light-1); }
+.text-white { color: var(--color-white); }
+.text-red-primary { color: var(--color-red-primary); }
+.text-red-bright { color: var(--color-red-bright); }
+
+.border-red-primary { border-color: var(--color-red-primary); }
+.border-gray-light { border-color: var(--color-gray-light-1); }
+
+/* Gradient Utilities */
+.gradient-red-dark {
+    background: linear-gradient(197.62deg, 
+        var(--color-red-bright) 0%, 
+        var(--color-red-gradient-2) 12%, 
+        var(--color-red-primary) 28%, 
+        var(--color-red-gradient-4) 45%, 
+        var(--color-red-gradient-5) 63%, 
+        var(--color-red-dark) 82%, 
+        var(--color-brown-red) 100%);
+}
+
+.gradient-red-simple {
+    background: linear-gradient(280.93deg, 
+        var(--color-brown-red) 0%, 
+        var(--color-red-bright) 100%);
+}
