@@ -39,18 +39,22 @@ export default function AppNavbar() {
         menu: "bg-dark-red",
       }}
     >
-      {/* Brand */}
-      <NavbarContent>
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="lg:hidden text-white"
-        />
+      {/* Brand and Toggle */}
+      <NavbarContent justify="start">
         <NavbarBrand>
           <div className="flex items-center gap-2">
             <Image src="/logo.png" alt="DevDay Logo" width={33} height={49} className="object-contain" />
             <p className="font-bold text-white text-lg">DEVDAY '26</p>
           </div>
         </NavbarBrand>
+      </NavbarContent>
+
+      {/* Mobile Menu Toggle - Right Side */}
+      <NavbarContent justify="end" className="lg:hidden">
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="text-white"
+        />
       </NavbarContent>
 
       {/* Desktop Menu */}
@@ -82,13 +86,13 @@ export default function AppNavbar() {
       </NavbarContent>
 
       {/* Mobile Menu */}
-      <NavbarMenu className="bg-dark-red pt-6">
+      <NavbarMenu className="bg-dark-red pt-6 flex flex-col items-center">
         {menuItems.map((item, index) => {
           const Icon = item.icon;
           return (
-            <NavbarMenuItem key={`${item.name}-${index}`}>
+            <NavbarMenuItem key={`${item.name}-${index}`} className="w-full flex justify-center">
               <Link
-                className="w-full text-white hover:text-gray-200 flex items-center gap-3 py-2"
+                className="text-white hover:text-gray-200 flex items-center gap-3 py-2"
                 href={item.href}
                 size="lg"
               >
@@ -98,11 +102,11 @@ export default function AppNavbar() {
             </NavbarMenuItem>
           );
         })}
-        <NavbarMenuItem>
+        <NavbarMenuItem className="w-full flex justify-center mt-4">
           <Button
             as={Link}
             href="/register"
-            className="bg-red-primary hover:bg-red-700 text-lg text-white font-bold gap-10 px-8"
+            className="bg-red-primary hover:bg-red-700 text-lg text-white font-bold px-8"
             radius="none"
           >
             REGISTER_NOW
