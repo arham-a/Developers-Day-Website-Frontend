@@ -30,7 +30,7 @@ export default function AppNavbar() {
     <Navbar
       isMenuOpen={isMenuOpen}
       onMenuOpenChange={setIsMenuOpen}
-      className="bg-dark-red border-b border-gray-700"
+      className="bg-dark-red border-b border-[#382929]"
       maxWidth="xl"
       height="5rem"
       classNames={{

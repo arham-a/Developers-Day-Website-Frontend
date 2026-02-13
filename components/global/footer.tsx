@@ -19,7 +19,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-black text-white border-t border-gray-800">
+    <footer className="bg-black text-white border-t border-[#392828]">
       <div className="container mx-auto px-4 md:px-6 py-12">
         {/* Logo and Description */}
         <div className="text-center mb-8">
@@ -69,7 +69,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="text-center">
           <p className="text-gray-500 text-xs">
-            © 2025 Design By Hasan Sami, Asjad Bin Rehan, Sameed Jamal. All Rights Reserved.
+            © 2025. Design By Hasan Sami, Asjad Bin Rehan, Sameed Jamal. Developed By Arham Alvi, Shareeq Rashid, Owais Rafiq.<br/> All Rights Reserved.
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { Link } from "@heroui/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import EventInfo from "./event-info";
 import Image from "next/image";
+import RotatingIcon from "./rotating-icon";
 
 export default function Hero() {
     return (
@@ -51,9 +52,9 @@ export default function Hero() {
                             <Button
                                 as={Link}
                                 href="/explore"
-                                className="bg-dark-red-2 text-white font-semibold px-6 md:px-8 py-6 text-base md:text-lg"
+                                className="bg-dark-red-2 text-white font-bold px-6 md:px-8 py-6 text-base md:text-lg"
                                 radius="none"
-                                endContent={<span className="text-xl">↓</span>}
+                                endContent={<Image src="/icons/bottom-right-arrow.svg" alt="Arrow" width={13} height={13} />}
                             >
                                 EXPLORE
                             </Button>
@@ -75,6 +76,11 @@ export default function Hero() {
                                     className="object-cover"
                                     priority
                                 />
+                                
+                                {/* Rotating Icon - Bottom Left */}
+                                <div className="absolute bottom-4 left-4 md:bottom-6 md:left-6 z-10">
+                                    <RotatingIcon />
+                                </div>
                             </div>
                         </div>
                     </div>

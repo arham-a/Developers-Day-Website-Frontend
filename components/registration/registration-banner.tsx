@@ -2,6 +2,7 @@
 
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
+import AnimatedToggle from "./animated-toggle";
 
 export default function RegistrationBanner() {
   return (
@@ -26,7 +27,7 @@ export default function RegistrationBanner() {
           <Button
             as={Link}
             href="/register"
-            className="bg-black hover:bg-gray-900 text-white font-bold px-8 py-6 text-base"
+            className="bg-black hover:bg-gray-900 text-white font-bold px-8 py-4 min-w-[230px] text-base"
             radius="none"
           >
             SECURE_ACCESS
@@ -34,16 +35,16 @@ export default function RegistrationBanner() {
           <Button
             as={Link}
             href="/modules"
-            className="bg-white hover:bg-gray-100 text-black font-bold px-8 py-6 text-base"
+            className="bg-white hover:bg-gray-100 text-black font-bold px-8 py-4 min-w-[230px] text-base"
             radius="none"
           >
             EXPLORE_MODULES
           </Button>
         </div>
 
-        {/* Decorative Element */}
+        {/* Animated Toggle */}
         <div className="flex justify-center">
-          <div className="w-12 h-1 bg-white rounded-full" />
+          <AnimatedToggle />
         </div>
       </div>
     </section>
