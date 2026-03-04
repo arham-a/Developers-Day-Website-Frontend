@@ -55,14 +55,14 @@ export default function TeamCard({ name, role, image, linkedInUrl, gradientVaria
           LinkedIn
         </Button>
         <div
-          className="relative flex-shrink-0 flex items-end justify-end w-[160px] sm:w-[200px] md:w-[240px] lg:w-[280px]"
+          className="relative flex-shrink-0 flex items-end justify-end w-[240px] sm:w-[220px] md:w-[240px] lg:w-[280px]"
         >
           <Image
             src={image}
             alt={name}
             width={1000}
             height={1000}
-            className="object-contain object-bottom w-full h-auto grayscale min-h-[200px] sm:min-h-[240px]"
+            className="object-contain object-bottom w-full h-auto grayscale min-h-[280px] sm:min-h-[250px] md:min-h-[260px]"
           />
         </div>
       </div>
