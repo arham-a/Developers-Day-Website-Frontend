@@ -112,3 +112,53 @@
 .animate-spin-slow {
     animation: spin-slow 3s linear infinite;
 }
+
+/* Campus reservation map hover effects */
+/* Make the outer frame of the SVG transparent so the page background shows through */
+.campus-map svg #map_dev > rect:first-child,
+.campus-map svg rect[width="1440"][height="543"] {
+    fill: transparent !important;
+}
+
+/* Make the SVG responsive and avoid horizontal scrollbars */
+.campus-map svg {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    display: block;
+}
+
+.campus-map svg #ee_block,
+.campus-map svg #ee_canteen,
+.campus-map svg #ee_lawn,
+.campus-map svg #mosque,
+.campus-map svg #cs_dhaba,
+.campus-map svg #entrance_garden,
+.campus-map svg #basketball_court,
+.campus-map svg #multipurpose,
+.campus-map svg #sports_room,
+.campus-map svg #futsal_court,
+.campus-map svg #cs_lawn,
+.campus-map svg #cs_block {
+    transition: transform 200ms ease, filter 200ms ease, opacity 200ms ease;
+    cursor: pointer;
+    opacity: 0.9;
+}
+
+.campus-map svg #ee_block:hover,
+.campus-map svg #ee_canteen:hover,
+.campus-map svg #ee_lawn:hover,
+.campus-map svg #mosque:hover,
+.campus-map svg #cs_dhaba:hover,
+.campus-map svg #entrance_garden:hover,
+.campus-map svg #basketball_court:hover,
+.campus-map svg #multipurpose:hover,
+.campus-map svg #sports_room:hover,
+.campus-map svg #futsal_court:hover,
+.campus-map svg #cs_lawn:hover,
+.campus-map svg #cs_block:hover {
+    opacity: 1;
+    filter: drop-shadow(0 0 16px rgba(215, 29, 34, 0.9));
+    transform: translateY(-3px);
+}
+

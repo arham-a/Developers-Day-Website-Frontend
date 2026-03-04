@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import TestimonialCard from "./testimonial-card";
+import { motion } from "framer-motion";
 
 export default function Testimonials() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -65,22 +66,42 @@ export default function Testimonials() {
     <section className="bg-dark-red-2 text-white py-16 md:py-24 overflow-hidden px-4">
       <div className="container mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.65, ease: [0.25, 0.1, 0.25, 1] }}
+          className="flex justify-between items-center mb-6"
+        >
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">TESTIMONIALS</h2>
           <span className="bg-red-primary text-white text-xs font-mono px-3 py-1">V4</span>
-        </div>
+        </motion.div>
 
         {/* Red divider */}
-        <div className="h-0.5 bg-red-primary mb-8" />
+        <motion.div
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          style={{ originX: 0 }}
+          className="h-0.5 bg-red-primary mb-8"
+        />
       </div>
 
       {/* Scrolling Testimonials */}
-      <div ref={scrollRef} className="flex gap-6 overflow-x-hidden">
+      <motion.div
+        ref={scrollRef}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: "-60px" }}
+        transition={{ duration: 0.7, delay: 0.2 }}
+        className="flex gap-6 overflow-x-hidden"
+      >
         {/* Duplicate testimonials for infinite scroll effect */}
         {[...testimonials, ...testimonials].map((testimonial, index) => (
           <TestimonialCard key={index} {...testimonial} />
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

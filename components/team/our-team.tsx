@@ -1,8 +1,8 @@
 "use client";
 
 import TeamCard from "./team-card";
+import { motion } from "framer-motion";
 
-// Derive role from filename: e.g. "Director_Marketing.png" -> "Director Marketing"
 function roleFromFilename(filename: string): string {
   return filename.replace(/\.(png|jpg|jpeg|webp)$/i, "").replace(/_/g, " ");
 }
@@ -53,20 +53,41 @@ export default function OurTeam() {
     <section className="bg-dark-red text-white py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
-        <div className="flex gap-4 mb-12 md:mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
+          className="flex gap-4 mb-12 md:mb-16"
+        >
           <div className="w-1 bg-red-primary flex-shrink-0" />
           <div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">OUR_TEAM</h2>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
+              OUR_TEAM
+            </h2>
             <p className="text-gray-400 text-sm md:text-base leading-relaxed">
               MEET THE LEADERSHIP BEHIND DEVDAY.
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Team Cards */}
+        {/* Team Cards — staggered grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-          {teamMembers.map((member) => (
-            <TeamCard key={member.role} {...member} />
+          {teamMembers.map((member, index) => (
+            <motion.div
+              key={member.role}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{
+                duration: 0.6,
+                delay: Math.min(index * 0.08, 0.56),
+                ease: [0.25, 0.1, 0.25, 1],
+              }}
+              whileHover={{ y: -6, transition: { duration: 0.25, ease: "easeOut" } }}
+            >
+              <TeamCard {...member} />
+            </motion.div>
           ))}
         </div>
       </div>

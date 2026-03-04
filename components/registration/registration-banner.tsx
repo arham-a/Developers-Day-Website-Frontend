@@ -3,27 +3,47 @@
 import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import AnimatedToggle from "./animated-toggle";
+import { motion } from "framer-motion";
 
 export default function RegistrationBanner() {
   return (
     <section className="bg-red-primary text-white py-20 md:py-32 px-4">
       <div className="container mx-auto text-center">
         {/* Title */}
-        <h2 className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 uppercase">
+        <motion.h2
+          initial={{ opacity: 0, scale: 0.88, y: 30 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.75, ease: [0.25, 0.1, 0.25, 1] }}
+          className="text-4xl md:text-5xl lg:text-7xl font-bold mb-6 uppercase"
+        >
           INITIALIZE
           <br />
           REGISTRATION
-        </h2>
+        </motion.h2>
 
         {/* Description */}
-        <p className="text-white text-sm md:text-base max-w-3xl mx-auto mb-12 leading-relaxed">
-          Step into the arena at DevDay'26, compete with the best, build under pressure,
+        <motion.p
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, delay: 0.15, ease: "easeOut" }}
+          className="text-white text-sm md:text-base max-w-3xl mx-auto mb-12 leading-relaxed"
+        >
+          Step into the arena at DevDay&apos;26, compete with the best, build under
+          pressure,
           <br className="hidden md:block" />
           prove your skills, and claim your place among the top developers.
-        </p>
+        </motion.p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.6, delay: 0.28, ease: "easeOut" }}
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12"
+        >
           <Button
             as={Link}
             href="/register"
@@ -40,12 +60,18 @@ export default function RegistrationBanner() {
           >
             EXPLORE_MODULES
           </Button>
-        </div>
+        </motion.div>
 
         {/* Animated Toggle */}
-        <div className="flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+          className="flex justify-center"
+        >
           <AnimatedToggle />
-        </div>
+        </motion.div>
       </div>
     </section>
   );

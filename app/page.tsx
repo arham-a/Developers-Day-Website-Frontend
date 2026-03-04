@@ -4,6 +4,7 @@ import { ModuleCategories } from "@/components/modules";
 import { ReconLogs } from "@/components/recon";
 import { Testimonials } from "@/components/testimonials";
 import { RegistrationBanner } from "@/components/registration";
+import CampusReservationMap from "@/components/campusReservationMap";
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <Hero />
       <AboutUs />
       <ModuleCategories />
+      <CampusReservationMap />
       <ReconLogs />
       <Testimonials />
       <RegistrationBanner />
