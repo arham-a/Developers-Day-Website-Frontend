@@ -223,22 +223,22 @@ export default function CampusReservationMap() {
 
   return (
     <section className="bg-dark-red text-white py-16 md:py-24 px-4 relative overflow-visible">
-      <div className="container mx-auto relative overflow-visible">
+      <div className="container mx-auto px-4 md:px-6 relative overflow-visible">
         <motion.div
           initial={{ opacity: 0, y: 35 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-          className="flex items-start justify-between mb-8 md:mb-10"
+          className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between mb-8 md:mb-10"
         >
           <div className="flex gap-4">
             <div className="w-1 bg-red-primary flex-shrink-0" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-[0.14em] md:tracking-[0.18em] leading-tight">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold tracking-[0.08em] sm:tracking-[0.12em] md:tracking-[0.16em] leading-tight max-w-3xl">
               <span className="block sm:inline">EVENT_DAY:</span>
               <span className="ml-2 block sm:inline">CAMPUS_RESERVATIONS</span>
             </h2>
           </div>
-          <span className="bg-red-primary text-white text-xs font-mono px-3 py-1 self-start mt-1">
+          <span className="bg-red-primary text-white text-xs font-mono px-3 py-1 self-start md:self-auto mt-1">
             03
           </span>
         </motion.div>
