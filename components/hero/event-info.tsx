@@ -41,24 +41,24 @@ export default function EventInfo() {
   }, []);
 
   return (
-    <div className="mt-12 md:mt-16 pt-8 border-t border-gray-700">
-      <div className="flex gap-8 md:gap-12">
+    <div className="mt-8 sm:mt-10 md:mt-16 pt-6 sm:pt-8 border-t border-gray-700">
+      <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 md:gap-12">
         {/* Status */}
-        <div>
-          <p className="text-red-500 text-xs font-bold uppercase tracking-wider mb-2">STATUS</p>
-          <p className="text-white text-base font-bold">COMING_SOON</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-red-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2">STATUS</p>
+          <p className="text-white text-sm sm:text-base font-bold break-words">COMING_SOON</p>
         </div>
 
         {/* Location */}
-        <div>
-          <p className="text-red-500 text-xs font-bold uppercase tracking-wider mb-2">LOCATION</p>
-          <p className="text-white text-base font-bold">FAST_NUCES</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-red-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2">LOCATION</p>
+          <p className="text-white text-sm sm:text-base font-bold break-words">FAST_NUCES</p>
         </div>
 
         {/* Countdown */}
-        <div>
-          <p className="text-red-500 text-xs font-bold uppercase tracking-wider mb-2">COUNTDOWN</p>
-          <p className="text-white text-base font-bold">
+        <div className="flex-1 min-w-0">
+          <p className="text-red-500 text-[10px] sm:text-xs font-bold uppercase tracking-wider mb-1 sm:mb-2">COUNTDOWN</p>
+          <p className="text-white text-xs sm:text-sm md:text-base font-bold font-mono break-words">
             {String(timeLeft.days).padStart(2, "0")}_DAYS : {String(timeLeft.hours).padStart(2, "0")}_HRS :{" "}
             {String(timeLeft.minutes).padStart(2, "0")}_MINS : {String(timeLeft.seconds).padStart(2, "0")}_SECS
           </p>

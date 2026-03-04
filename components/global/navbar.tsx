@@ -12,11 +12,18 @@ import {
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
 import { HomeIcon, CubeIcon, CalendarIcon, UserGroupIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Image from "next/image";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  // Close mobile menu when route changes (e.g. after clicking a link)
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   const menuItems = [
     { name: "HOME", href: "/", icon: HomeIcon },
@@ -95,6 +102,7 @@ export default function AppNavbar() {
                 className="text-white hover:text-gray-200 flex items-center gap-3 py-2"
                 href={item.href}
                 size="lg"
+                onPress={() => setIsMenuOpen(false)}
               >
                 <Icon className="w-5 h-5" />
                 {item.name}
@@ -108,6 +116,7 @@ export default function AppNavbar() {
             href="/register"
             className="bg-red-primary hover:bg-red-700 text-lg text-white font-bold px-8"
             radius="none"
+            onPress={() => setIsMenuOpen(false)}
           >
             REGISTER_NOW
           </Button>
