@@ -34,8 +34,7 @@ export default function TeamCard({ name, role, image, linkedInUrl, gradientVaria
       />
 
       {/* Card content */}
-      <div className="relative z-10 p-6 pt-12 sm:p-8 sm:pt-16 flex-1 flex flex-col">
-        <p className={`text-xl font-mono uppercase tracking-wider mb-1 ${roleColorClass}`}>
+      <div className="relative z-10 p-6 pt-12 sm:p-8 sm:pt-16 flex flex-col h-[200px]">  <p className={`text-xl font-mono uppercase tracking-wider mb-1 ${roleColorClass}`}>
           {role}
         </p>
         <h3 className="text-white text-xl sm:text-2xl md:text-4xl font-bold uppercase mb-4 sm:mb-6 mt-6 sm:mt-8">{name}</h3>
