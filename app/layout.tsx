@@ -10,6 +10,7 @@ import AppNavbar from "@/components/global/navbar";
 import Footer from "@/components/global/footer";
 import SplashProvider from "@/components/SplashProvider";
 import SmoothScroll from "@/components/SmoothScroll";
+import PageTransition from "@/components/PageTransition";
 
 export const metadata: Metadata = {
   title: {
@@ -49,7 +50,7 @@ export default function RootLayout({
               <div className="relative flex flex-col min-h-screen">
                 <AppNavbar />
                 <main className="flex-grow">
-                  {children}
+                  <PageTransition>{children}</PageTransition>
                 </main>
                 <Footer />
               </div>

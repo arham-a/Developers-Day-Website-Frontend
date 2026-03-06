@@ -11,10 +11,17 @@ import {
 } from "@heroui/navbar";
 import { Link } from "@heroui/link";
 import { Button } from "@heroui/button";
-import { HomeIcon, CubeIcon, CalendarIcon, UserGroupIcon, EnvelopeIcon } from "@heroicons/react/24/outline";
+import {
+  HomeIcon,
+  CubeIcon,
+  CalendarIcon,
+  UserGroupIcon,
+  EnvelopeIcon,
+} from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
+import { LayoutGroup, motion } from "framer-motion";
 
 export default function AppNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -49,10 +56,24 @@ export default function AppNavbar() {
       {/* Brand and Toggle */}
       <NavbarContent justify="start">
         <NavbarBrand>
-          <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="DevDay Logo" width={33} height={49} className="object-contain" />
-            <p className="font-bold text-white text-lg">DEVDAY '26</p>
-          </div>
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+            className="flex items-center gap-2"
+          >
+            <Image
+              src="/logo.png"
+              alt="DevDay Logo"
+              width={33}
+              height={49}
+              className="object-contain"
+            />
+            <p className="font-bold text-white text-lg tracking-[0.18em]">
+              DEVDAY &apos;26
+            </p>
+          </motion.div>
         </NavbarBrand>
       </NavbarContent>
 
@@ -66,16 +87,35 @@ export default function AppNavbar() {
 
       {/* Desktop Menu */}
       <NavbarContent className="hidden lg:flex gap-6" justify="center">
-        {menuItems.map((item) => (
-          <NavbarItem key={item.name}>
-            <Link
-              href={item.href}
-              className="text-white hover:text-gray-200 text-base transition-colors font-bold"
-            >
-              {item.name}
-            </Link>
-          </NavbarItem>
-        ))}
+        <LayoutGroup id="navbar-links">
+          {menuItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== "/" && pathname.startsWith(item.href));
+
+            return (
+              <NavbarItem key={item.name} className="relative">
+                <Link
+                  href={item.href}
+                  className="text-white hover:text-gray-200 text-sm md:text-base transition-colors font-bold tracking-[0.18em]"
+                >
+                  {item.name}
+                </Link>
+                {isActive && (
+                  <motion.div
+                    layoutId="navbar-active-underline"
+                    className="absolute -bottom-1 left-0 right-0 h-[2px] bg-red-primary"
+                    transition={{
+                      type: "spring",
+                      stiffness: 380,
+                      damping: 30,
+                    }}
+                  />
+                )}
+              </NavbarItem>
+            );
+          })}
+        </LayoutGroup>
       </NavbarContent>
 
       {/* Register Button - Desktop Only */}
