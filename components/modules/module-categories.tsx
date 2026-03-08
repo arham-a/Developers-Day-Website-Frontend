@@ -13,10 +13,11 @@ export default function ModuleCategories() {
       icon: (
         <Image src="/icons/coding.svg" alt="Coding" width={32} height={32} />
       ),
-      title: "CODE_CODING",
+      title: "CORE CODING",
       description:
         "Solve algorithmic challenges and compete in real-time coding competitions.",
       code: "C_01",
+      url: "/modules/coding",
     },
     {
       id: "software-engineering",
@@ -32,34 +33,65 @@ export default function ModuleCategories() {
       description:
         "Architecting resilient systems that withstand the pressure of high-throughput operations.",
       code: "C_02",
+      url: "/modules/software-eng",
     },
     {
       id: "tech-quest",
       icon: (
         <Image src="/icons/tech.svg" alt="Tech" width={32} height={32} />
       ),
-      title: "TECH_QUEST",
+      title: "TECH QUEST",
       description:
         "Exploration and tech testing platform digital innovations.",
       code: "C_03",
+      url: "/modules/tech-quest",
     },
     {
-      id: "build-break",
+      id: "dev-design",
       icon: (
-        <Image src="/icons/build.svg" alt="Build" width={32} height={32} />
+        <Image src="/icons/dev.svg" alt="Build" width={32} height={32} />
       ),
-      title: "BUILD_&_BREAK",
+      title: "DEV & DESGIN",
       description:
         "Stress-testing structures through adversarial design and deconstruction.",
       code: "C_04",
+      url: "/modules/dev-design",
     },
     {
       id: "ai-data",
       icon: <Image src="/icons/ai.svg" alt="AI" width={32} height={32} />,
-      title: "AI_&_DATA",
+      title: "AI & DATA SCIENCE",
       description:
         "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
       code: "C_05",
+      url: "/modules/ai-data",
+    },
+    {
+      id: "general",
+      icon: <Image src="/icons/general.svg" alt="AI" width={32} height={32} />,
+      title: "GENERAL",
+      description:
+        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+      code: "C_06",
+      url: "/modules/general",
+    },
+    {
+      id: "electrical-eng",
+      icon: <Image src="/icons/electrical.svg" alt="AI" width={32} height={32} />,
+      title: "ELECTRICAL ENGINEERING",
+      description:
+        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+      code: "C_07",
+      url: "/modules/electrical-eng",
+    },
+    {
+      id: "business",
+      icon: <Image src="/icons/business.svg" alt="AI" width={32} height={32} />,
+      title: "BUSINESS",
+      description:
+        "Deep neural modeling and predictive analytics processing vast datasets logic warfare.",
+      code: "C_08",
+      url: "/modules/business",
     },
   ];
 

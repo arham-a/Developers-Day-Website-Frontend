@@ -2,6 +2,7 @@
 
 import CompetitionCard from "./competition-card";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import {
   CpuChipIcon,
   CircleStackIcon,
@@ -80,7 +81,7 @@ const competitions = [
     ],
     variant: "outline" as const,
     registerHref: "/register",
-  },{
+  }, {
     title: "COMPETITIVE\nPROGRAMMING",
     titleIcon: CODE_ICON,
     image: '/competitions/competitive.jpg',
@@ -130,73 +131,83 @@ const cardVariants = {
   },
 };
 
-export interface ModuleCompetitionsProps{
-    id: string;
-    icon: any;
-    title: string;
-    description: string; 
-    color: string;
+export interface ModuleCompetitionsProps {
+  id: string;
+  icon: any;
+  title: string;
+  description: string;
+  color: string;
+  bgColor: string;
 }
 
-export default function ModuleCompetitions({id, icon, title, description, color}: ModuleCompetitionsProps) {
+export default function ModuleCompetitions({ id, icon, title, description, color, bgColor }: ModuleCompetitionsProps) {
   return (
     <section
-    style={{ '--color': color } as React.CSSProperties} 
-    className="bg-[#050508] text-white py-16 md:py-24 px-4">
-      <div className="container mx-auto max-w-5xl">
+      style={{ '--color': color, '--bg-color': bgColor } as React.CSSProperties}
+      className="bg-[var(--bg-color)] text-white py-16 md:py-24 px-4">
+      <div className="container mx-auto max-w-6xl">
         {/* ── Header ── */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.65, ease: [0.25, 0.1, 0.25, 1] }}
-          className="flex justify-between items-start mb-14"
+          className="flex gap-4 sm:gap-5 items-stretch mb-10 sm:mb-14"
         >
-          {/* Left: blue bar + titles + description */}
-          <div className="flex gap-5">
-            {/* Vertical blue accent */}
-            <motion.div
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 0.55, delay: 0.3, ease: "easeOut" }}
-              style={{ originY: 0 }}
-              className="w-1 bg-[var(--color)] self-stretch flex-shrink-0"
-            />
-            <div>
-                {(()=>{
-                    const w = title.split(/[\s_\n]+/).filter(Boolean);
-                    const last = w.pop();
-                    return <>
-                        <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold uppercase text-white leading-none">
-                            {w.join(" ")}
-                        </h1>
-                        <h2 className="text-5xl sm:text-6xl md:text-7xl font-bold uppercase text-[var(--color)] leading-none">
-                            {last}
-                        </h2>
-                    </>
-            })()}
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, delay: 0.45, ease: "easeOut" }}
-                className="text-gray-400 text-xs sm:text-sm mt-5 max-w-xl leading-relaxed uppercase tracking-widest"
-              >
-                PROVE YOUR WORTH IN THE DIGITAL ARENA. TWO TRACKS. HIGH STAKES.
-                PURE CODE.
-                <br />
-                SELECT YOUR PROTOCOL AND EXECUTE.
-              </motion.p>
-            </div>
-          </div>
-
-          {/* Right: < > icon */}
+          {/* Vertical accent line */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.55, delay: 0.35, ease: "easeOut" }}
-            className="text-[var(--color)] text-5xl md:text-6xl font-mono font-bold flex-shrink-0 hidden sm:block select-none"
-          >
-            {icon}
-          </motion.div>
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.55, delay: 0.3, ease: "easeOut" }}
+            style={{ originY: 0 }}
+            className="w-1 bg-[var(--color)] self-stretch flex-shrink-0"
+          />
+
+          {/* Content */}
+          <div className="flex flex-col gap-3 sm:gap-4 w-full">
+            {/* Row 1: Heading + Icon */}
+            <div className="flex items-center justify-between gap-3 sm:gap-6">
+              <div>
+                {(() => {
+                  const w = title.split(/[\s_\n]+/).filter(Boolean);
+                  const last = w.pop();
+                  return (
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase text-white leading-tight">
+                      {w.join(" ")}
+                      {w.length > 0 && <br />}
+                      <span className="text-[var(--color)]">{last}</span>
+                    </h1>
+                  );
+                })()}
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.55, delay: 0.35, ease: "easeOut" }}
+                className="flex-shrink-0 select-none"
+              >
+                <Image
+                  src={icon}
+                  alt={id}
+                  width={100}
+                  height={100}
+                  className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24"
+                />
+              </motion.div>
+            </div>
+
+            {/* Row 2: Description */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.45, ease: "easeOut" }}
+              className="text-gray-400 text-[10px] sm:text-xs md:text-sm leading-relaxed uppercase tracking-widest max-w-xl"
+            >
+              PROVE YOUR WORTH IN THE DIGITAL ARENA. TWO TRACKS. HIGH STAKES. PURE CODE.
+              <br className="hidden sm:block" />
+              {" "}SELECT YOUR PROTOCOL AND EXECUTE.
+            </motion.p>
+          </div>
         </motion.div>
 
         {/* ── Cards Grid ── */}
@@ -206,8 +217,8 @@ export default function ModuleCompetitions({id, icon, title, description, color}
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 gap-6"
         >
-          {competitions.map((comp) => (
-            <motion.div key={comp.title} variants={cardVariants}>
+          {competitions.map((comp,idx) => (
+            <motion.div key={comp.title+idx} variants={cardVariants}>
               <CompetitionCard {...comp} />
             </motion.div>
           ))}

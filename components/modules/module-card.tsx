@@ -11,9 +11,10 @@ interface ModuleCardProps {
   title: string;
   description: string;
   code: string;
+  url: string;
 }
 
-export default function ModuleCard({ id, icon, title, description, code }: ModuleCardProps) {
+export default function ModuleCard({ id, icon, title, description, code, url }: ModuleCardProps) {
   return (
     <div className="bg-dark-red-1 flex flex-col h-[350px] overflow-hidden">
       {/* Content Area */}
@@ -35,7 +36,7 @@ export default function ModuleCard({ id, icon, title, description, code }: Modul
       <div className="px-6 pb-6">
         <Button
           as={Link}
-          href={`/modules/${id}`}
+          href={url}
           className="bg-dark-red-2 hover:bg-dark-red-2 text-white font-mono text-sm w-full justify-between"
           radius="none"
           fullWidth
