@@ -82,7 +82,7 @@ const modules = [
 export default async function ModulePage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }) {
     const { id: moduleId } = await params;
     const selectedModule = modules.find((m) => m.id === moduleId);
