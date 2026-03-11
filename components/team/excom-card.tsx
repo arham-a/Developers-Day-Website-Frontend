@@ -15,7 +15,7 @@ interface TeamCardProps {
   isMiddle?: boolean;
 }
 
-export default function TeamCard({ name, role, image, linkedInUrl, gradientVariant, isMiddle }: TeamCardProps) {
+export default function ExcomCard({ name, role, image, linkedInUrl, gradientVariant, isMiddle }: TeamCardProps) {
   const [showModal, setShowModal] = useState(false);
 
   const roleColorClass =

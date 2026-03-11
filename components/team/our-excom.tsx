@@ -1,6 +1,6 @@
 "use client";
 
-import TeamCard from "./team-card";
+import TeamCard from "./excom-card";
 import { motion } from "framer-motion";
 
 function roleFromFilename(filename: string): string {
@@ -100,7 +100,7 @@ const otherMembers = teamMembers.filter(member =>
   !member.image.endsWith("/Vice_President.png")
 );
 
-export default function OurTeam() {
+export default function OurExcom() {
   return (
     <section className="bg-dark-red text-white py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-6">
@@ -110,15 +110,14 @@ export default function OurTeam() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.7, ease: [0.25, 0.1, 0.25, 1] }}
-          className="flex gap-4 mb-12 md:mb-16"
+          className="flex gap-4 mb-12 md:mb-16 border-l-3 border-red-primary pl-4 sm:pl-7 pt-2 items-start font-mono"
         >
-          <div className="w-1 bg-red-primary flex-shrink-0" />
           <div>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              OUR_TEAM
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-7">
+              MEET_OUR_EXCOM
             </h2>
-            <p className="text-gray-400 text-sm md:text-base leading-relaxed">
-              MEET THE LEADERSHIP BEHIND DEVDAY.
+            <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-4 sm:mb-7">
+              THE LEADERSHIP BEHIND DEVELOPER'S DAY 2026.
             </p>
           </div>
         </motion.div>
