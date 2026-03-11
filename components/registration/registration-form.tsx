@@ -230,6 +230,7 @@ export default function RegistrationForm() {
     const validateTeamTab = (): string | null => {
         if (!formData.teamName.trim()) return "Team name is required.";
         if (!formData.competitionId.trim()) return "Please select a competition.";
+        if (!formData.institutionName.trim()) return "Institution name is required.";
         const picked = competitions.find((comp) => comp.id === formData.competitionId);
         if (picked && picked.capacityLimit <= 0) {
             return "This competition is full. Please select another competition.";
@@ -433,7 +434,7 @@ export default function RegistrationForm() {
                     <div className="absolute top-0 left-0 h-full w-[6px] bg-green-500" />
                     <div className="pl-4">
                         <p className="text-green-400 text-xs font-mono mb-2 tracking-widest uppercase">STATUS :: REGISTRATION_COMPLETE</p>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white uppercase mb-2">Entry Confirmed</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white uppercase mb-2">Entry Received</h2>
                         <p className="text-gray-400 text-sm md:text-base">
                             Your registration has been submitted successfully. A confirmation email will be sent to you shortly.
                         </p>
