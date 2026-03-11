@@ -7,10 +7,12 @@ import { Select, SelectItem } from "@heroui/select";
 // @ts-ignore – sonner types may not be available in this project yet
 import { toast } from "sonner";
 import RegistrationReceipt from "./registration-receipt";
+import InstitutionAutocomplete from "./institution-autocomplete";
 import { submitPublicRegistration } from "@/lib/api/registration";
 import type { TeamMemberInput } from "@/types/registration";
 import type { CompetitionWithCategory } from "@/types/competitions";
 import { fetchCompetitionsWithCategory, fetchCompetitionById } from "@/lib/api/competitions";
+import { INSTITUTION_OPTIONS } from "@/config/institutions";
 
 type TabType = "team" | "leader" | "members" | "payment";
 
@@ -62,6 +64,10 @@ function formatCnicDisplay(value: string): string {
     return `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12)}`;
 }
 
+function normalizeInstitutionName(value: string): string {
+    return value.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
 export default function RegistrationForm() {
     const [activeTab, setActiveTab] = useState<TabType>("team");
     const [paymentPreviewUrl, setPaymentPreviewUrl] = useState<string | null>(null);
@@ -74,6 +80,7 @@ export default function RegistrationForm() {
     const [isLoadingCompetitions, setIsLoadingCompetitions] = useState(true);
     const [competitionError, setCompetitionError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const [institutionOptions, setInstitutionOptions] = useState<string[]>(INSTITUTION_OPTIONS);
     const [amountDue, setAmountDue] = useState<number | null>(null);
     const [isLoadingAmountDue, setIsLoadingAmountDue] = useState(false);
     const [isEarlyBirdActive, setIsEarlyBirdActive] = useState(false);
@@ -165,6 +172,26 @@ export default function RegistrationForm() {
         }));
         setSubmitError(null);
         setSubmitSuccess(null);
+    };
+
+    const addInstitutionOption = (value: string) => {
+        const nextInstitution = value.trim();
+
+        if (!nextInstitution) return;
+
+        setInstitutionOptions((prev) => {
+            const exists = prev.some(
+                (institution) =>
+                    normalizeInstitutionName(institution) ===
+                    normalizeInstitutionName(nextInstitution)
+            );
+
+            if (exists) {
+                return prev;
+            }
+
+            return [...prev, nextInstitution];
+        });
     };
 
     const addMember = () => {
@@ -631,15 +658,12 @@ export default function RegistrationForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="text-red-primary text-xs font-mono mb-2 block">05</label>
-                                <Input
+                                <InstitutionAutocomplete
                                     placeholder="INSTITUTION_NAME"
                                     value={formData.institutionName}
+                                    options={institutionOptions}
                                     onValueChange={(value) => updateFormData("institutionName", value)}
-                                    classNames={{
-                                        input: "bg-dark-red text-white placeholder:text-gray-600",
-                                        inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                    }}
-                                    radius="none"
+                                    onAddOption={addInstitutionOption}
                                 />
                             </div>
                         </div>
@@ -778,15 +802,12 @@ export default function RegistrationForm() {
                                         }}
                                         radius="none"
                                     />
-                                    <Input
+                                    <InstitutionAutocomplete
                                         placeholder="INSTITUTION (OPTIONAL)"
                                         value={member.institution || ""}
+                                        options={institutionOptions}
                                         onValueChange={(value) => updateMember(index, "institution", value)}
-                                        classNames={{
-                                            input: "bg-dark-red text-white placeholder:text-gray-600",
-                                            inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                        }}
-                                        radius="none"
+                                        onAddOption={addInstitutionOption}
                                     />
                                 </div>
                             </div>
