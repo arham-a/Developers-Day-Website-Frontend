@@ -20,8 +20,8 @@ export default function ModuleCard({ id, icon, title, description, code, url }: 
       {/* Content Area */}
       <div className="p-6 flex-1 flex flex-col">
         {/* Header with icon and code */}
-        <div className="flex justify-between items-start mb-6">
-          <div className="text-red-primary text-3xl flex-shrink-0">{icon}</div>
+        <div className="flex justify-between items-center mb-6 h-8">
+          <div className="text-red-primary flex-shrink-0 ">{icon}</div>
           <span className="text-gray-600 text-xs font-mono">{code}</span>
         </div>
 
