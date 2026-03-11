@@ -80,20 +80,22 @@ const modules = [
 ];
 
 async function getCompetitions() {
-    await new Promise((resolve) => setTimeout(resolve, 3000)); // 👈 add this
+  try {
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/competitions/public`,
-        {
-            next: { revalidate: 3600 }, // cache for 1 hour
-        }
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/competitions/public`,
+      { next: { revalidate: 3600 } }
     );
 
     if (!res.ok) {
-        throw new Error("Failed to fetch competitions");
+      throw new Error(`API returned ${res.status}: ${res.statusText}`);
     }
 
     const data = await res.json();
     return data.data;
+  } catch (err) {
+    console.error("getCompetitions failed:", err);
+    throw err; // let error.tsx catch it
+  }
 }
 
 const idToCategoryMap: { [key: string]: string } = {
