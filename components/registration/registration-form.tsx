@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
+import { useSearchParams } from 'next/navigation'
 import { Select, SelectItem } from "@heroui/select";
 // @ts-ignore – sonner types may not be available in this project yet
 import { toast } from "sonner";
@@ -101,7 +102,24 @@ export default function RegistrationForm() {
         members: [{ ...EMPTY_MEMBER }],
         paymentScreenshot: null,
     });
-
+    const searchParams = useSearchParams()
+    const paramCompetitionId = searchParams.get('competition')
+    useEffect(() => {
+        if (paramCompetitionId) {
+            setFormData((prev) => ({
+                ...prev,
+                competitionId: paramCompetitionId,
+            }));
+        }
+    }, [paramCompetitionId]);
+    // Auto-set category filter when a competitionId is already in formData
+    useEffect(() => {
+        if (!formData.competitionId || competitions.length === 0 || selectedCategory) return;
+        const matched = competitions.find((c) => c.id === formData.competitionId);
+        if (matched) {
+            setSelectedCategory(matched.category);
+        }
+    }, [competitions, formData.competitionId, selectedCategory]);
     useEffect(() => {
         let isMounted = true;
 
@@ -473,8 +491,8 @@ export default function RegistrationForm() {
                     return (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
-                            className={`cursor-pointer bg-dark-red-1 relative pl-4 md:pl-6 pr-2 md:pr-4 py-3 md:py-6 text-left transition-all
+                            // onClick={() => setActiveTab(tab.id)}
+                            className={`bg-dark-red-1 relative pl-4 md:pl-6 pr-2 md:pr-4 py-3 md:py-6 text-left transition-all
         ${active
                                     ? "shadow-[0_0_20px_rgba(215,29,34,0.6)]"
                                     : ""}
@@ -878,8 +896,8 @@ export default function RegistrationForm() {
                             <div className="absolute top-0 left-0 h-full w-[6px] bg-red-primary" />
                             <div className="pl-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                                 <div>
-                                    <p className="text-red-primary text-xs font-mono tracking-widest uppercase mb-1">AMOUNT_DUE</p>
-                                    <p className="text-gray-400 text-xs font-mono">
+                                    <p className="text-red-primary text-xs sm:text-sm font-mono tracking-widest uppercase mb-1">AMOUNT_DUE</p>
+                                    <p className="text-gray-400 text-xs sm:text-sm font-mono">
                                         {isEarlyBirdActive ? "EARLY_BIRD_PRICING_APPLIED" : "STANDARD_PRICING"}
                                     </p>
                                 </div>

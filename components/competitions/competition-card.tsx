@@ -10,6 +10,7 @@ export interface CompetitionCardProps {
   description: string;
   minTeamSize: number;
   maxTeamSize: number;
+  capacityLimit: number;
   earlyBirdLimit: number;
   earlyBirdPrice: number;
   normalPrice: number;
@@ -23,6 +24,7 @@ export default function CompetitionCard({
   maxTeamSize,
   earlyBirdLimit,
   earlyBirdPrice,
+  capacityLimit,
   normalPrice,
   registerHref = "/register",
 }: CompetitionCardProps) {
@@ -47,7 +49,7 @@ export default function CompetitionCard({
           {/* Team Size */}
           <div className="bg-[#1A1A1A] p-3 w-full border border-[#FFFFFF0D] border-l-2 border-l-[var(--color,#2563EB)] flex flex-col items-baseline gap-2">
             <UserGroupIcon className="w-4 h-4 text-[var(--color,#2563EB)]" />
-            <span className="text-white text-sm">TEAM: {maxTeamSize==1 ? 'Individual' : `${minTeamSize}-${maxTeamSize} Members`}</span>
+            <span className="text-white text-sm">TEAM: {maxTeamSize == 1 ? 'Individual' : `${minTeamSize}-${maxTeamSize} Members`}</span>
           </div>
 
           {/* Fees */}
@@ -74,17 +76,18 @@ export default function CompetitionCard({
           {/* Register Button */}
           <Button
             fullWidth
-            as={Link}
-            href={registerHref}
+            as={capacityLimit <= 0 && earlyBirdLimit <= 0 ? "button" : Link}
+            href={capacityLimit <= 0 && earlyBirdLimit <= 0 ? undefined : registerHref}
+            isDisabled={capacityLimit <= 0 && earlyBirdLimit <= 0}
             radius="none"
             size="lg"
             className="font-bold tracking-widest text-sm justify-between px-5 bg-[var(--color,#2563EB)] hover:border hover:border-[var(--color,#2563EB)] hover:text-[var(--color,#2563EB)] hover:bg-transparent flex-shrink-0"
-            endContent={<span className="text-lg font-bold">→</span>}
+            endContent={capacityLimit <= 0 && earlyBirdLimit <= 0 ? undefined : <span className="text-lg font-bold">→</span>}
           >
-            REGISTER NOW
+            {capacityLimit <= 0 && earlyBirdLimit <= 0 ? "COMPETITION FULL" : "REGISTER NOW"}
           </Button>
         </div>
-        </div>  
+      </div>
     </motion.div>
   );
 }
