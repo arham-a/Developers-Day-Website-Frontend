@@ -7,10 +7,12 @@ import { Select, SelectItem } from "@heroui/select";
 // @ts-ignore – sonner types may not be available in this project yet
 import { toast } from "sonner";
 import RegistrationReceipt from "./registration-receipt";
+import InstitutionAutocomplete from "./institution-autocomplete";
 import { submitPublicRegistration } from "@/lib/api/registration";
 import type { TeamMemberInput } from "@/types/registration";
 import type { CompetitionWithCategory } from "@/types/competitions";
-import { fetchCompetitionsWithCategory, fetchCompetitionById } from "@/lib/api/competitions";
+import { fetchCompetitionsWithCategory } from "@/lib/api/competitions";
+import { INSTITUTION_OPTIONS } from "@/config/institutions";
 
 type TabType = "team" | "leader" | "members" | "payment";
 
@@ -23,6 +25,7 @@ interface FormData {
     leaderEmail: string;
     leaderPhone: string;
     leaderCnic: string;
+    leaderRollNumber: string;
     members: TeamMemberInput[];
     paymentScreenshot: File | null;
 }
@@ -33,11 +36,13 @@ const EMPTY_MEMBER: TeamMemberInput = {
     cnic: "",
     phone: "",
     institution: "",
+    rollNumber: "",
 };
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^03\d{9}$/;
 const cnicDisplayRegex = /^\d{5}-\d{7}-\d{1}$/;
+const rollNumberRegex = /^\d{2}[IPLKMF]\d{4}$/;
 
 function normalizeCnic(cnic: string): string {
     return cnic.replace(/[^0-9]/g, "");
@@ -62,6 +67,14 @@ function formatCnicDisplay(value: string): string {
     return `${digits.slice(0, 5)}-${digits.slice(5, 12)}-${digits.slice(12)}`;
 }
 
+function formatRollNumberInput(value: string): string {
+    return value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 7);
+}
+
+function normalizeInstitutionName(value: string): string {
+    return value.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
 export default function RegistrationForm() {
     const [activeTab, setActiveTab] = useState<TabType>("team");
     const [paymentPreviewUrl, setPaymentPreviewUrl] = useState<string | null>(null);
@@ -74,10 +87,7 @@ export default function RegistrationForm() {
     const [isLoadingCompetitions, setIsLoadingCompetitions] = useState(true);
     const [competitionError, setCompetitionError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
-    const [amountDue, setAmountDue] = useState<number | null>(null);
-    const [isLoadingAmountDue, setIsLoadingAmountDue] = useState(false);
-    const [isEarlyBirdActive, setIsEarlyBirdActive] = useState(false);
-    const [latestCompetitionDetail, setLatestCompetitionDetail] = useState<CompetitionWithCategory | null>(null);
+    const [institutionOptions, setInstitutionOptions] = useState<string[]>(INSTITUTION_OPTIONS);
     const [formData, setFormData] = useState<FormData>({
         teamName: "",
         competitionId: "",
@@ -87,36 +97,10 @@ export default function RegistrationForm() {
         leaderEmail: "",
         leaderPhone: "",
         leaderCnic: "",
+        leaderRollNumber: "",
         members: [{ ...EMPTY_MEMBER }],
         paymentScreenshot: null,
     });
-
-    useEffect(() => {
-        if (activeTab !== "payment" || !formData.competitionId) return;
-
-        let isMounted = true;
-        setIsLoadingAmountDue(true);
-        setAmountDue(null);
-        setIsEarlyBirdActive(false);
-        setLatestCompetitionDetail(null);
-
-        (async () => {
-            try {
-                const comp = await fetchCompetitionById(formData.competitionId);
-                if (!isMounted) return;
-                setLatestCompetitionDetail(comp);
-                const earlyBird = comp.earlyBirdLimit > 0;
-                setIsEarlyBirdActive(earlyBird);
-                setAmountDue(earlyBird ? comp.earlyBirdFee : comp.fee);
-            } catch {
-                // silently fall back — amount due stays null
-            } finally {
-                if (isMounted) setIsLoadingAmountDue(false);
-            }
-        })();
-
-        return () => { isMounted = false; };
-    }, [activeTab, formData.competitionId]);
 
     useEffect(() => {
         let isMounted = true;
@@ -167,6 +151,30 @@ export default function RegistrationForm() {
         setSubmitSuccess(null);
     };
 
+    const addInstitutionOption = (value: string) => {
+        const nextInstitution = value.trim();
+
+        if (!nextInstitution) return;
+
+        setInstitutionOptions((prev) => {
+            const exists = prev.some(
+                (institution) =>
+                    normalizeInstitutionName(institution) ===
+                    normalizeInstitutionName(nextInstitution)
+            );
+
+            if (exists) {
+                return prev;
+            }
+
+            return [...prev, nextInstitution];
+        });
+    };
+
+    const requiresRollNumbers =
+        normalizeInstitutionName(formData.institutionName) ===
+        normalizeInstitutionName(INSTITUTION_OPTIONS[0] || "");
+
     const addMember = () => {
         const selectedCompetition = competitions.find(
             (comp) => comp.id === formData.competitionId
@@ -203,6 +211,7 @@ export default function RegistrationForm() {
     const validateTeamTab = (): string | null => {
         if (!formData.teamName.trim()) return "Team name is required.";
         if (!formData.competitionId.trim()) return "Please select a competition.";
+        if (!formData.institutionName.trim()) return "Institution name is required.";
         const picked = competitions.find((comp) => comp.id === formData.competitionId);
         if (picked && picked.capacityLimit <= 0) {
             return "This competition is full. Please select another competition.";
@@ -223,6 +232,15 @@ export default function RegistrationForm() {
         const cnicDigits = normalizeCnic(cnicRaw);
         if (cnicDigits.length !== 13 || (!cnicDisplayRegex.test(cnicRaw) && cnicRaw !== cnicDigits)) {
             return "Leader CNIC must contain 13 digits in the format 12345-1234567-1.";
+        }
+
+        const leaderRollNumber = formData.leaderRollNumber.trim();
+        if (requiresRollNumbers && !leaderRollNumber) {
+            return "Leader roll number is required.";
+        }
+
+        if (requiresRollNumbers && !rollNumberRegex.test(leaderRollNumber)) {
+            return "Leader roll number must be in the format 22K4581, where the letter can only be I, P, L, K, M, or F.";
         }
 
         return null;
@@ -253,6 +271,15 @@ export default function RegistrationForm() {
             const phone = member.phone?.trim();
             if (phone && !phoneRegex.test(phone)) {
                 return `Member ${number}: phone must be in the format 03XXXXXXXXX (e.g. 03363277876).`;
+            }
+
+            const rollNumber = member.rollNumber?.trim() || "";
+            if (requiresRollNumbers && !rollNumber) {
+                return `Member ${number}: roll number is required.`;
+            }
+
+            if (requiresRollNumbers && !rollNumberRegex.test(rollNumber)) {
+                return `Member ${number}: roll number must be in the format 22K4581, where the letter can only be I, P, L, K, M, or F.`;
             }
         }
 
@@ -324,15 +351,17 @@ export default function RegistrationForm() {
                 leaderCnic: normalizeCnic(formData.leaderCnic),
                 leaderPhone: formData.leaderPhone.trim() || undefined,
                 leaderInstitution: formData.institutionName.trim() || undefined,
+                leaderRollNumber: formData.leaderRollNumber.trim() || undefined,
                 members: validMembers.map((m) => ({
                     fullName: m.fullName.trim(),
                     email: m.email.trim(),
                     cnic: normalizeCnic(m.cnic || ""),
                     phone: m.phone?.trim() || undefined,
                     institution: m.institution?.trim() || undefined,
+                    rollNumber: m.rollNumber?.trim() || undefined,
                 })),
                 paymentScreenshot: formData.paymentScreenshot,
-                isEarlyBird: (latestCompetitionDetail?.earlyBirdLimit ?? 0) > 0,
+                isEarlyBird: earlyBirdLimit > 0,
             });
 
             const successMessage =
@@ -379,9 +408,13 @@ export default function RegistrationForm() {
     const normalFee = selectedCompetition?.fee ?? 0;
     const earlyBirdFee = selectedCompetition?.earlyBirdFee ?? 0;
     const earlyBirdLimit = selectedCompetition?.earlyBirdLimit ?? 0;
+    const isEarlyBirdActive = earlyBirdLimit > 0;
+    const amountDue = selectedCompetition
+        ? (isEarlyBirdActive ? earlyBirdFee : normalFee)
+        : null;
 
     const discountApplied =
-        earlyBirdLimit > 0 ? Math.max(0, normalFee - earlyBirdFee) : 0;
+        isEarlyBirdActive ? Math.max(0, normalFee - earlyBirdFee) : 0;
 
     if (isSubmitted) {
         const handleDownloadReceipt = async () => {
@@ -406,7 +439,7 @@ export default function RegistrationForm() {
                     <div className="absolute top-0 left-0 h-full w-[6px] bg-green-500" />
                     <div className="pl-4">
                         <p className="text-green-400 text-xs font-mono mb-2 tracking-widest uppercase">STATUS :: REGISTRATION_COMPLETE</p>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white uppercase mb-2">Entry Confirmed</h2>
+                        <h2 className="text-2xl md:text-3xl font-bold text-white uppercase mb-2">Entry Received</h2>
                         <p className="text-gray-400 text-sm md:text-base">
                             Your registration has been submitted successfully. A confirmation email will be sent to you shortly.
                         </p>
@@ -631,15 +664,12 @@ export default function RegistrationForm() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label className="text-red-primary text-xs font-mono mb-2 block">05</label>
-                                <Input
+                                <InstitutionAutocomplete
                                     placeholder="INSTITUTION_NAME"
                                     value={formData.institutionName}
+                                    options={institutionOptions}
                                     onValueChange={(value) => updateFormData("institutionName", value)}
-                                    classNames={{
-                                        input: "bg-dark-red text-white placeholder:text-gray-600",
-                                        inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                    }}
-                                    radius="none"
+                                    onAddOption={addInstitutionOption}
                                 />
                             </div>
                         </div>
@@ -672,7 +702,7 @@ export default function RegistrationForm() {
                                 radius="none"
                             />
                         </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className={`grid grid-cols-1 md:grid-cols-2 ${requiresRollNumbers ? "lg:grid-cols-3" : ""} gap-6`}>
                             <Input
                                 placeholder="PHONE_NUMBER"
                                 type="tel"
@@ -701,6 +731,21 @@ export default function RegistrationForm() {
                                 }}
                                 radius="none"
                             />
+                            {requiresRollNumbers && (
+                                <Input
+                                    placeholder="ROLL_NUMBER (e.g. 22K4581)"
+                                    type="text"
+                                    value={formData.leaderRollNumber}
+                                    onValueChange={(value) =>
+                                        updateFormData("leaderRollNumber", formatRollNumberInput(value))
+                                    }
+                                    classNames={{
+                                        input: "bg-dark-red text-white placeholder:text-gray-600 uppercase",
+                                        inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
+                                    }}
+                                    radius="none"
+                                />
+                            )}
                         </div>
                     </div>
                 )}
@@ -749,7 +794,7 @@ export default function RegistrationForm() {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className={`grid grid-cols-1 md:grid-cols-2 ${requiresRollNumbers ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4`}>
                                     <Input
                                         placeholder="CNIC"
                                         type="text"
@@ -778,15 +823,27 @@ export default function RegistrationForm() {
                                         }}
                                         radius="none"
                                     />
-                                    <Input
+                                    {requiresRollNumbers && (
+                                        <Input
+                                            placeholder="ROLL_NUMBER (e.g. 22K4581)"
+                                            type="text"
+                                            value={member.rollNumber || ""}
+                                            onValueChange={(value) =>
+                                                updateMember(index, "rollNumber", formatRollNumberInput(value))
+                                            }
+                                            classNames={{
+                                                input: "bg-dark-red text-white placeholder:text-gray-600 uppercase",
+                                                inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
+                                            }}
+                                            radius="none"
+                                        />
+                                    )}
+                                    <InstitutionAutocomplete
                                         placeholder="INSTITUTION (OPTIONAL)"
                                         value={member.institution || ""}
+                                        options={institutionOptions}
                                         onValueChange={(value) => updateMember(index, "institution", value)}
-                                        classNames={{
-                                            input: "bg-dark-red text-white placeholder:text-gray-600",
-                                            inputWrapper: "bg-dark-red border-2 border-gray-800 hover:border-gray-700 h-[56px]",
-                                        }}
-                                        radius="none"
+                                        onAddOption={addInstitutionOption}
                                     />
                                 </div>
                             </div>
@@ -827,9 +884,7 @@ export default function RegistrationForm() {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    {isLoadingAmountDue ? (
-                                        <p className="text-gray-500 text-sm font-mono animate-pulse">LOADING...</p>
-                                    ) : amountDue !== null ? (
+                                    {amountDue !== null ? (
                                         <p className="text-white text-2xl md:text-3xl font-bold font-mono">
                                             PKR <span className="text-red-primary">{amountDue}</span>
                                         </p>
