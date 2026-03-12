@@ -567,6 +567,9 @@ export default function RegistrationForm() {
                                     isDisabled={isLoadingCompetitions || !!competitionError}
                                     classNames={selectClassNames}
                                     scrollShadowProps={{ hideScrollBar: false }}
+                                    listboxProps={{
+                                        onWheel: (e) => e.stopPropagation(),
+                                    }}
                                     radius="none"
                                 >
                                     <SelectItem key="" textValue="All categories">
@@ -615,6 +618,9 @@ export default function RegistrationForm() {
                                     isDisabled={isLoadingCompetitions || !!competitionError}
                                     classNames={selectClassNames}
                                     scrollShadowProps={{ hideScrollBar: false }}
+                                    listboxProps={{
+                                        onWheel: (e) => e.stopPropagation(),
+                                    }}
                                     radius="none"
                                 >
                                     {visibleCompetitions.map((comp) => {
