@@ -6,10 +6,13 @@ interface StatCardProps {
   stat: React.ReactNode;
   title: string;
   icon: ReactNode;
+  sequence?: number;
   variant?: "red" | "dark";
 }
 
-export default function StatCard({ stat, title, icon, variant = "red" }: StatCardProps) {
+export default function StatCard({ stat, title, icon, sequence = 1, variant = "red" }: StatCardProps) {
+  const statSequence = String(sequence).padStart(2, "0");
+
   return (
     <div
       className={`relative p-6 md:p-8 flex flex-col justify-between min-h-[320px] md:min-h-[430px] ${
@@ -18,7 +21,7 @@ export default function StatCard({ stat, title, icon, variant = "red" }: StatCar
     >
       {/* Header with icon */}
       <div className="flex justify-between items-start mb-12">
-        <p className={`text-xs font-mono ${variant === "red" ? "text-white" : "text-red-primary"}`}>STATS_01 //</p>
+        <p className={`text-xs font-mono ${variant === "red" ? "text-white" : "text-red-primary"}`}>STATS_{statSequence} //</p>
         <div className="text-white text-3xl md:text-4xl">{icon}</div>
       </div>
 

@@ -99,9 +99,9 @@ export default function Footer() {
 
             {/* Description */}
             <p className="text-gray-400 text-xs sm:text-sm leading-relaxed max-w-xl text-center lg:text-left mx-auto lg:mx-0">
-              DevDay&apos;26 is a high-intensity, developer-first competition
-              where teams design, build, and ship under pressure — spanning
-              software, hardware, and AI modules.
+              DevDay&apos;26 is a celebration of coding, innovation, and ideas for students.
+The event features 30+ competitions across different domains.
+Alongside the contests, enjoy food stalls, mini-games, and on-campus entertainment.
             </p>
 
             {/* Nav + social */}
@@ -193,10 +193,10 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 border-t border-gray-800 pt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <p className="text-gray-500 text-[0.65rem] sm:text-xs text-center md:text-left">
-            © 2025 DevDay&apos;26. All rights reserved.
+            ©2025 DevDay&apos;26. All rights reserved.
           </p>
           <p className="text-gray-600 text-[0.6rem] sm:text-[0.7rem] text-center md:text-right font-mono uppercase tracking-[0.16em]">
-            BUILT BY THE DEVDDAY&apos;26 TECH TEAM
+            BUILT BY THE DEVDAY&apos;26 TECH TEAM
           </p>
         </div>
       </div>

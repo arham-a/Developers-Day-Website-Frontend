@@ -146,6 +146,7 @@ export default function AboutUs() {
             >
               <StatCard
                 {...card}
+                sequence={index + 1}
                 stat={<AnimatedStat stat={card.stat} />}
               />
             </motion.div>
