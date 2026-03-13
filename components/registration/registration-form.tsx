@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 import { Button } from "@heroui/button";
 import { Input } from "@heroui/input";
 import { useSearchParams } from 'next/navigation'
@@ -15,6 +16,23 @@ import type { CompetitionWithCategory } from "@/types/competitions";
 import { fetchCompetitionsWithCategory } from "@/lib/api/competitions";
 import { INSTITUTION_OPTIONS } from "@/config/institutions";
 import PaymentDetails from './payment-details'
+
+declare global {
+    interface Window {
+        turnstile?: {
+            render: (container: string | HTMLElement, options: {
+                sitekey: string;
+                theme?: "light" | "dark" | "auto";
+                action?: string;
+                callback?: (token: string) => void;
+                "expired-callback"?: () => void;
+                "error-callback"?: (errorCode?: string) => void;
+            }) => string;
+            reset: (widgetId?: string) => void;
+            remove?: (widgetId?: string) => void;
+        };
+    }
+}
 
 type TabType = "team" | "leader" | "members" | "payment";
 
@@ -78,6 +96,7 @@ function normalizeInstitutionName(value: string): string {
 }
 
 export default function RegistrationForm() {
+    const turnstileSiteKey = process.env.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
     const [activeTab, setActiveTab] = useState<TabType>("team");
     const [paymentPreviewUrl, setPaymentPreviewUrl] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,6 +109,10 @@ export default function RegistrationForm() {
     const [competitionError, setCompetitionError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState<string>("");
     const [institutionOptions, setInstitutionOptions] = useState<string[]>(INSTITUTION_OPTIONS);
+    const [isTurnstileScriptReady, setIsTurnstileScriptReady] = useState(false);
+    const [turnstileToken, setTurnstileToken] = useState<string>("");
+    const turnstileContainerRef = useRef<HTMLDivElement | null>(null);
+    const turnstileWidgetIdRef = useRef<string | null>(null);
     const [formData, setFormData] = useState<FormData>({
         teamName: "",
         competitionId: "",
@@ -152,6 +175,47 @@ export default function RegistrationForm() {
             isMounted = false;
         };
     }, []);
+
+    useEffect(() => {
+        if (activeTab !== "payment") {
+            return;
+        }
+
+        if (!turnstileSiteKey || !isTurnstileScriptReady || !turnstileContainerRef.current || !window.turnstile) {
+            return;
+        }
+
+        if (
+            turnstileWidgetIdRef.current &&
+            turnstileContainerRef.current.childElementCount > 0
+        ) {
+            return;
+        }
+
+        turnstileWidgetIdRef.current = null;
+
+        const widgetId = window.turnstile.render(turnstileContainerRef.current, {
+            sitekey: turnstileSiteKey,
+            theme: "dark",
+            action: "public_registration",
+            callback: (token: string) => {
+                setTurnstileToken(token);
+                setSubmitError(null);
+            },
+            "expired-callback": () => {
+                setTurnstileToken("");
+            },
+            "error-callback": (errorCode?: string) => {
+                setTurnstileToken("");
+                const message = errorCode
+                    ? `Cloudflare verification error: ${errorCode}. Please retry.`
+                    : "Cloudflare verification failed. Please retry.";
+                setSubmitError(message);
+            },
+        });
+
+        turnstileWidgetIdRef.current = widgetId;
+    }, [activeTab, isTurnstileScriptReady, turnstileSiteKey]);
 
     const updateFormData = (field: keyof FormData, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
@@ -325,6 +389,21 @@ export default function RegistrationForm() {
         setSubmitError(null);
         setSubmitSuccess(null);
 
+        if (!turnstileSiteKey) {
+            const message = "Cloudflare is not configured. Please contact support.";
+            setSubmitError(message);
+            toast.error(message);
+            return;
+        }
+
+        if (!turnstileToken) {
+            const message = "Please complete the Cloudflare verification before submitting.";
+            setSubmitError(message);
+            toast.error(message);
+            setActiveTab("payment");
+            return;
+        }
+
         const teamError = validateTeamTab();
         if (teamError) {
             setSubmitError(teamError);
@@ -365,6 +444,7 @@ export default function RegistrationForm() {
                 competitionId,
                 teamName: formData.teamName.trim(),
                 referenceCode: formData.referenceCode.trim() || undefined,
+                turnstileToken,
                 leaderFullName: formData.leaderName.trim(),
                 leaderEmail: formData.leaderEmail.trim(),
                 leaderCnic: normalizeCnic(formData.leaderCnic),
@@ -393,6 +473,10 @@ export default function RegistrationForm() {
                 error?.message || "Failed to submit registration. Please try again.";
             setSubmitError(message);
             toast.error(message);
+            setTurnstileToken("");
+            if (window.turnstile && turnstileWidgetIdRef.current) {
+                window.turnstile.reset(turnstileWidgetIdRef.current);
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -425,7 +509,8 @@ export default function RegistrationForm() {
         popoverContent: "bg-dark-red",
     };
 
-    const paymentStatus = formData.paymentScreenshot ? "SUBMITTED" : "NONE";
+    const canViewReceipt = Boolean(formData.paymentScreenshot && turnstileToken);
+    const paymentStatus = canViewReceipt ? "SUBMITTED" : "NONE";
     const teamMembersCount = getValidMembers().length + 1;
     const selectedCompetition = competitions.find(
         (comp) => comp.id === formData.competitionId
@@ -895,6 +980,12 @@ export default function RegistrationForm() {
                 {activeTab === "payment" && (
                     <div className="space-y-8">
 
+                        <Script
+                            src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+                            strategy="afterInteractive"
+                            onLoad={() => setIsTurnstileScriptReady(true)}
+                        />
+
                         {/* AMOUNT DUE BANNER */}
                         <div className="bg-dark-red-1 border border-red-primary/40 p-5 md:p-6 relative overflow-hidden">
                             <div className="absolute top-0 left-0 h-full w-[6px] bg-red-primary" />
@@ -1011,6 +1102,29 @@ export default function RegistrationForm() {
                                     <li>Use the same participant / team name here as in the payment details.</li>
                                 </ul>
                             </div>
+
+                            <div className="bg-dark-red border border-gray-800 p-4 md:p-5 space-y-3">
+                                <p className="text-red-primary text-xs font-mono tracking-widest uppercase">
+                                    02 // CLOUDFLARE_VERIFICATION
+                                </p>
+                                {!turnstileSiteKey ? (
+                                    <p className="text-yellow-300 text-xs md:text-sm">
+                                        Turnstile site key is missing. Set NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY to enable submission.
+                                    </p>
+                                ) : (
+                                    <>
+                                        <p className="text-gray-400 text-xs md:text-sm">
+                                            Complete this verification before final submission.
+                                        </p>
+                                        <div ref={turnstileContainerRef} className="min-h-[70px]" />
+                                        {turnstileToken ? (
+                                            <p className="text-green-400 text-xs font-mono">VERIFIED</p>
+                                        ) : (
+                                            <p className="text-yellow-300 text-xs font-mono">PENDING_VERIFICATION</p>
+                                        )}
+                                    </>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
@@ -1043,6 +1157,14 @@ export default function RegistrationForm() {
                                     toast.error(message);
                                     return;
                                 }
+
+                                if (!turnstileToken) {
+                                    const message = "Please complete Cloudflare verification before reviewing the receipt.";
+                                    setSubmitError(message);
+                                    toast.error(message);
+                                    return;
+                                }
+
                                 // Scroll to receipt
                                 receiptRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
                                 return;
@@ -1087,18 +1209,27 @@ export default function RegistrationForm() {
 
             {/* Registration Receipt */}
             <div ref={receiptRef} className="scroll-mt-8">
-                <RegistrationReceipt
-                    teamName={formData.teamName}
-                    leaderName={formData.leaderName}
-                    moduleName={selectedCompetition?.name}
-                    teamMembers={teamMembersCount}
-                    moduleFee={normalFee}
-                    discount={discountApplied}
-                    paymentStatus={paymentStatus}
-                    onDownloadRulebook={handleDownloadRulebook}
-                    onConfirmEntry={handleSubmit}
-                    isSubmitting={isSubmitting}
-                />
+                {canViewReceipt ? (
+                    <RegistrationReceipt
+                        teamName={formData.teamName}
+                        leaderName={formData.leaderName}
+                        moduleName={selectedCompetition?.name}
+                        teamMembers={teamMembersCount}
+                        moduleFee={normalFee}
+                        discount={discountApplied}
+                        paymentStatus={paymentStatus}
+                        onDownloadRulebook={handleDownloadRulebook}
+                        onConfirmEntry={handleSubmit}
+                        isSubmitting={isSubmitting}
+                    />
+                ) : (
+                    <div className="bg-dark-red-1 border border-gray-800 p-6 md:p-8 font-mono">
+                        <p className="text-red-primary text-xs tracking-widest uppercase mb-2">RECEIPT_LOCKED</p>
+                        <p className="text-gray-300 text-sm md:text-base">
+                            Upload the payment screenshot and complete Cloudflare verification to review your receipt.
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
