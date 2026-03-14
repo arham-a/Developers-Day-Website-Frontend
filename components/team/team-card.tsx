@@ -17,7 +17,7 @@ export default function ExcomCard({ name, role, image, linkedInUrl }: TeamCardPr
     <div className="relative bg-[#1C0D0D] border-5 border-[#332323] overflow-hidden flex flex-col min-h-[350px] h-full">
 
       {/* Image — fixed height, never grows */}
-      <div className="relative flex-shrink-0 w-full h-[265px]">
+      <div className="relative flex-shrink-0 w-full h-[265px] border-[#1C0D0D] border-2">
         <Image
           src={image}
           alt={name}
