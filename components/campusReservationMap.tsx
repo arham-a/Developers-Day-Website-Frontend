@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion } from "framer-motion";
 
 type BlockId =
@@ -138,6 +139,7 @@ export default function CampusReservationMap() {
     useState<HoveredBlockState | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<BlockId | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [modalBlock, setModalBlock] = useState<BlockId | null>(null);
 
   const mapRef = useRef<HTMLDivElement | null>(null);
 
@@ -216,8 +218,23 @@ export default function CampusReservationMap() {
     };
 
     const handleClick = (e: MouseEvent) => {
-      if (!isMobile) return;
+      if (!isMobile) {
+        // Desktop: Open modal on click
+        const target = e.target as Element;
+        if (!target || !mapRef.current) return;
+
+        const blockEl = target.closest(selector) as SVGElement | null;
+        if (!blockEl) {
+          setModalBlock(null);
+          return;
+        }
+
+        const id = blockEl.id as BlockId;
+        setModalBlock(id);
+        return;
+      }
       
+      // Mobile: Select block for info panel
       const target = e.target as Element;
       if (!target || !mapRef.current) return;
 
@@ -242,6 +259,32 @@ export default function CampusReservationMap() {
     };
   }, [svgMarkup, isMobile]);
 
+
+useEffect(() => {
+  if (modalBlock && !isMobile) {
+    const scrollY = window.scrollY;
+
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
+
+      window.scrollTo(0, scrollY);
+    };
+  }
+}, [modalBlock, isMobile]);
+
+
   return (
     <section className="bg-dark-red text-white py-16 md:py-24 px-4 relative overflow-visible">
       <div className="container mx-auto relative overflow-visible">
@@ -254,7 +297,7 @@ export default function CampusReservationMap() {
         >
           <div className="flex gap-4">
             <div className="w-1 bg-red-primary flex-shrink-0" />
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-[0.14em] md:tracking-[0.18em] leading-tight">
+            <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-[0.14em] md:tracking-[0.18em] leading-tight">
               <span className="block sm:inline">EVENT_DAY:</span>
               <span className="ml-2 block sm:inline">CAMPUS_RESERVATIONS</span>
             </h2>
@@ -286,34 +329,33 @@ export default function CampusReservationMap() {
               <>
                 {/* Map */}
                 <div className="flex justify-center">
-                  <div className="relative w-full max-w-md">
+                  <div className="relative w-full max-w-md overflow-hidden">
                     <div
-                      ref={mapRef}
-                      dangerouslySetInnerHTML={{ __html: svgMarkup }}
-                      className="w-full"
-                    />
+  ref={mapRef}
+  dangerouslySetInnerHTML={{ __html: svgMarkup }}
+  className="w-full [&>svg]:w-full [&>svg]:h-auto [&>svg]:max-w-full"
+/>
+
                   </div>
                 </div>
 
                 {/* Building Navigation Buttons */}
-                <div className="overflow-x-auto">
-                  <div className="flex gap-2 justify-center px-4 pb-2 min-w-max mx-auto">
-                    {BLOCK_IDS.map((blockId) => (
-                      <motion.button
-                        key={blockId}
-                        onClick={() => setSelectedBlock(blockId)}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className={`px-3 py-2 rounded-md font-mono text-xs whitespace-nowrap transition-all ${
-                          selectedBlock === blockId
-                            ? "bg-red-primary text-white font-bold"
-                            : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                        }`}
-                      >
-                        {BLOCK_INFO[blockId].title}
-                      </motion.button>
-                    ))}
-                  </div>
+                <div className="flex gap-2 flex-wrap justify-center px-2">
+                  {BLOCK_IDS.map((blockId) => (
+                    <motion.button
+                      key={blockId}
+                      onClick={() => setSelectedBlock(blockId)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className={`px-3 py-2 rounded-md font-mono text-xs whitespace-nowrap transition-all ${
+                        selectedBlock === blockId
+                          ? "bg-red-primary text-white font-bold"
+                          : "bg-gray-700 text-gray-200 hover:bg-gray-600"
+                      }`}
+                    >
+                      {BLOCK_INFO[blockId].title}
+                    </motion.button>
+                  ))}
                 </div>
 
                 {/* Selected Building Info */}
@@ -363,49 +405,10 @@ export default function CampusReservationMap() {
             {svgMarkup ? (
               <div className="flex justify-center">
                 <div className="relative w-full min-w-[320px] max-w-6xl overflow-visible">
-                  {hoveredBlock && BLOCK_INFO[hoveredBlock.id] && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{ duration: 0.15 }}
-                      className="pointer-events-none absolute z-[9999] left-1/2"
-                      style={{
-                        left: `${hoveredBlock.centerX * 0.7}px`,
-                        top: `${hoveredBlock.top - 16}px`,
-                        transform: "translate(-50%, -100%)",
-                      }}
-                    >
-                      <div className="flex flex-col items-center">
-                        <div className="bg-red-primary text-white font-mono text-xs md:text-sm px-4 md:px-6 py-3 rounded-md shadow-2xl whitespace-nowrap">
-                          <p className="tracking-widest mb-2 font-bold">
-                            {BLOCK_INFO[hoveredBlock.id].title}
-                          </p>
-                          <ul className="space-y-1">
-                            {BLOCK_INFO[hoveredBlock.id].events.map((event) => (
-                              <li
-                                key={`${event.name}-${event.location}`}
-                                className="flex justify-between gap-6 text-xs"
-                              >
-                                <span className="uppercase font-semibold">
-                                  {event.name}
-                                </span>
-                                <span className="ml-4 text-gray-100">
-                                  {event.location}
-                                </span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[12px] border-l-transparent border-r-transparent border-t-red-primary" />
-                      </div>
-                    </motion.div>
-                  )}
-
                   <div
                     ref={mapRef}
                     dangerouslySetInnerHTML={{ __html: svgMarkup }}
-                    className="w-full"
+                    className="w-full cursor-pointer"
                   />
                 </div>
               </div>
@@ -416,6 +419,58 @@ export default function CampusReservationMap() {
             )}
           </motion.div>
         )}
+
+        {/* Modal for clicked block - Desktop only */}
+        {modalBlock && !isMobile && BLOCK_INFO[modalBlock] &&
+  createPortal(
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={() => setModalBlock(null)}
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/25 backdrop-blur-sm"
+    >
+      <motion.div
+        initial={{ scale: 0.92, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.92, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className="bg-dark-red text-white font-mono rounded-lg p-6 max-w-md w-[90%] border border-red-primary shadow-2xl"
+      >
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="font-bold tracking-widest text-lg">
+            {BLOCK_INFO[modalBlock].title}
+          </h3>
+
+          <button
+            onClick={() => setModalBlock(null)}
+            className="text-2xl font-bold text-red-primary hover:text-red-400"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="space-y-2">
+          {BLOCK_INFO[modalBlock].events.map((event) => (
+            <div
+              key={`${event.name}-${event.location}`}
+              className="flex justify-between gap-4 text-sm border-t border-red-600 pt-2"
+            >
+              <span className="uppercase font-semibold text-red-primary flex-1">
+                {event.name}
+              </span>
+
+              <span className="text-gray-200 whitespace-nowrap">
+                {event.location}
+              </span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>,
+    document.body
+  )}
+
       </div>
     </section>
   );
