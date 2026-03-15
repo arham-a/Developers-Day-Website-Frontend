@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Metadata } from "next";
 import ModuleCompetitions from "@/components/competitions/module-competitions";
 import { RegistrationBanner } from "@/components/registration";
 import ModuleNotFound from "@/components/competitions/module-not-found";
@@ -94,6 +95,55 @@ const modules = [
         bgColor: "#0B000E",
     },
 ];
+
+function formatModuleTitle(rawTitle: string) {
+    return rawTitle.replace(/_/g, " ").replace(/\s+/g, " ").trim();
+}
+
+export async function generateMetadata({
+    params,
+}: {
+    params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+    const { id } = await params;
+    const selectedModule = modules.find((m) => m.id === id);
+
+    if (!selectedModule) {
+        return {
+            title: "Module Not Found",
+            description: "The requested competition module could not be found.",
+            robots: {
+                index: false,
+                follow: false,
+            },
+        };
+    }
+
+    const moduleTitle = formatModuleTitle(selectedModule.title);
+    const title = `${moduleTitle} | Developer's Day 2026`;
+    const description = `${moduleTitle} competitions at Developer's Day 2026. ${selectedModule.categoryDescription[0]}`;
+    const canonicalPath = `/modules/${selectedModule.id}`;
+
+    return {
+        title,
+        description,
+        alternates: {
+            canonical: canonicalPath,
+        },
+        openGraph: {
+            title,
+            description,
+            url: canonicalPath,
+            images: [{ url: "/logo-1.png", alt: `${moduleTitle} competitions` }],
+        },
+        twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: ["/logo-1.png"],
+        },
+    };
+}
 
 async function getCompetitions() {
     try {
