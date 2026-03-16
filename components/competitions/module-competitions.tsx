@@ -148,6 +148,7 @@ export default function ModuleCompetitions({
           {categoryCompetitions.map((comp: Competition) => (
             <motion.div key={comp.id} variants={cardVariants}>
               <CompetitionCard
+                id={comp.id}
                 title={comp.name}
                 description={comp.description}
                 minTeamSize={comp.minTeamSize}

@@ -4,8 +4,10 @@ import { Button } from "@heroui/button";
 import { Link } from "@heroui/link";
 import { UserGroupIcon, BanknotesIcon, CalendarDaysIcon, InformationCircleIcon } from "@heroicons/react/24/solid";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export interface CompetitionCardProps {
+  id: string;
   title: string;
   description: string;
   minTeamSize: number;
@@ -20,6 +22,7 @@ export interface CompetitionCardProps {
 }
 
 export default function CompetitionCard({
+  id,
   title,
   description,
   minTeamSize,
@@ -114,13 +117,25 @@ export default function CompetitionCard({
   const scheduleDate = formatScheduleDate(startTime);
   const scheduleTime = formatScheduleTime(startTime, endTime);
 
+  useEffect(() => {
+    if (id && typeof window !== "undefined" && window.location.hash === `#${id}`) {
+      const timeout = setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [id]);
+
   return (
     <motion.div
       className="flex flex-col h-full overflow-hidden bg-[#111214] border-[0.25px] border-[#333333]"
       whileHover={{ y: -4, transition: { duration: 0.25 } }}
     >
       {/* Title */}
-      <div className="bg-[#1A1A1A] border border-[#333333] p-4 flex-shrink-0">
+      <div id={id} className="bg-[#1A1A1A] border border-[#333333] p-4 flex-shrink-0">
         <h2 className="text-white text-2xl font-bold uppercase tracking-wide">
           {title}
         </h2>
