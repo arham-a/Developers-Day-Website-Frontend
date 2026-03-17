@@ -6,7 +6,8 @@ export default function Ticker({ categoryId, color, bgColor }) {
     const [teams, setTeams] = useState([]);
     useEffect(() => {
         console.log("categoryId", categoryId);
-        setTeams([...teamsData[categoryId], ...teamsData[categoryId]]);
+        const teamDataCheck = teamsData[categoryId] || [];//xtreme may to koi nahe hai team may
+        setTeams([...teamDataCheck, ...teamDataCheck]);
     }, [categoryId]);
     return (
         <div className="flex items-center border-b border-white/10 bg-[#0a0a0a] py-[0.55rem] overflow-hidden whitespace-nowrap">

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Metadata } from "next";
 import ModuleCompetitions from "@/components/competitions/module-competitions";
 import { RegistrationBanner } from "@/components/registration";
@@ -252,7 +251,15 @@ export default async function ModulePage({
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(moduleJsonLd.collection) }}
             />
-            <ModuleCompetitions {...selectedModule} categoryCompetitions={categoryCompetitions} />
+            <ModuleCompetitions
+                id={selectedModule.id}
+                icon={selectedModule.icon}
+                title={selectedModule.title}
+                categoryDescription={selectedModule.categoryDescription}
+                color={selectedModule.color}
+                bgColor={selectedModule.bgColor}
+                categoryCompetitions={categoryCompetitions}
+            />
             <RegistrationBanner />
         </>
     );

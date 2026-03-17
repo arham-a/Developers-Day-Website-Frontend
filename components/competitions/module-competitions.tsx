@@ -56,7 +56,7 @@ export default function ModuleCompetitions({
   categoryDescription,
   color,
   bgColor,
-  categoryCompetitions
+  categoryCompetitions,
 }: CompetitionsCateogoryProps) {
 
   return (
