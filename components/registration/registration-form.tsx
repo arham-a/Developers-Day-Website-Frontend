@@ -49,6 +49,7 @@ const MODULE_CATEGORY_ORDER = [
     "General",
     "Electrical Engineering",
     "Business",
+    "Project Xtreme",
 ];
 
 interface FormData {
@@ -144,6 +145,7 @@ export default function RegistrationForm() {
     });
     const searchParams = useSearchParams()
     const paramCompetitionId = searchParams.get('competition')
+    const paramCategory = searchParams.get('category')
     useEffect(() => {
         if (paramCompetitionId) {
             setFormData((prev) => ({
@@ -152,6 +154,18 @@ export default function RegistrationForm() {
             }));
         }
     }, [paramCompetitionId]);
+    useEffect(() => {
+        if (!paramCategory || competitions.length === 0) return;
+
+        const availableCategories = Array.from(new Set(competitions.map((c) => c.category)));
+        const matchedCategory = availableCategories.find(
+            (category) => normalizeInstitutionName(category) === normalizeInstitutionName(paramCategory)
+        );
+
+        if (matchedCategory) {
+            setSelectedCategory(matchedCategory);
+        }
+    }, [paramCategory, competitions]);
     // Auto-set category filter when a competitionId is already in formData
     useEffect(() => {
         if (!formData.competitionId || competitions.length === 0 || selectedCategory) return;

@@ -25,7 +25,8 @@ import {
   CircleStackIcon,
   FlagIcon,
   BoltIcon,
-  PresentationChartBarIcon
+  PresentationChartBarIcon,
+  Squares2X2Icon
 } from "@heroicons/react/24/outline";
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -41,6 +42,7 @@ const modules = [
   { id: "general",       label: "General",         icon: FlagIcon },
   { id: "electrical-eng",label: "Electrical Eng",  icon: BoltIcon },
   { id: "business",      label: "Business",        icon: PresentationChartBarIcon },
+  { id: "project-xtreme",label: "Project Xtreme",  icon: Squares2X2Icon },
 ];
 
 

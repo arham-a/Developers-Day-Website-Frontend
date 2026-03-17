@@ -93,6 +93,30 @@ export default function ModuleCategories() {
       code: "C_08",
       url: "/modules/business",
     },
+    {
+      id: "project-xtreme",
+      icon: (
+        <div
+          aria-label="Project Xtreme"
+          className="w-15 h-15 -ml-2 bg-current text-[#C6FF00]"
+          style={{
+            WebkitMaskImage: "url('/icons/project-xtreme.svg')",
+            maskImage: "url('/icons/project-xtreme.svg')",
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+            WebkitMaskSize: "contain",
+            maskSize: "contain",
+          }}
+        />
+      ),
+      title: "PROJECT XTREME",
+      description:
+        "Showcase your FYP or product to industry professionals and unlock mentorship, visibility, and recruitment opportunities.",
+      code: "C_09",
+      url: "/modules/project-xtreme",
+    },
   ];
 
   return (
@@ -125,7 +149,7 @@ export default function ModuleCategories() {
         />
 
         {/* Module Grid — staggered cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {modules.map((module, index) => (
             <motion.div
               key={module.code}
