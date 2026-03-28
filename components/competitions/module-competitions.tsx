@@ -171,7 +171,7 @@ export default function ModuleCompetitions({
 
               {/* Right: CTA */}
               <button
-                onClick={() => window.location.href = "/zones"}
+                onClick={() => window.location.href = "/the-simulation"}
                 className="font-mono text-[10px] font-bold sm:text-xs tracking-[0.25em] uppercase px-4 py-2 border transition-all hover:bg-[var(--color)]/20 cursor-pointer"
                 style={{
                   borderColor: color,
