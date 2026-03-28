@@ -59,7 +59,7 @@ const eventDetailsItems = [
   { id: "job-fair", label: "Job_Fair", icon: Handshake },
   { id: "food-fest", label: "Food_Fest", icon: ChefHat },
   { id: "mini-games", label: "Mini_Games", icon: GamepadDirectional },
-  { id: "modules/the-simulation", label: "The_Simulation", icon: MapIcon },
+  { id: "the-simulation", label: "The_Simulation", icon: MapIcon },
 ];
 
 const ourTeamItems = [
@@ -117,7 +117,7 @@ export default function AppNavbar() {
   const isEventDetailsActive = eventDetailsItems.some((item) => pathname === `/${item.id}`);
   const isOurTeamActive = ourTeamItems.some((item) => pathname === `/${item.id}`);
 
-  const isModulesActive = pathname.startsWith("/modules") && pathname !== "/modules/the-simulation";
+  const isModulesActive = pathname.startsWith("/modules");
 
   return (
     <Navbar
